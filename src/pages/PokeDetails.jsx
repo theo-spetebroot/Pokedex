@@ -1,39 +1,16 @@
-import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router";
-import api from "../services/api";
-import TypeBadge from "../components/TypeBadge";
+import { useQuery } from "@tanstack/react-query";
+import { pokemonQuery } from "../services/pokemons";
+import TypeBadge from "../components/atoms/TypeBadge";
+import Message from "../components/atoms/Message";
 
 function PokeDetails() {
-    const { id } = useParams();                         // id du pokémon dans l'URL
-    const [resultat, setResultat] = useState(null);     // Résultat du dernier GET : { id, pokemon, erreur }
+    const { id } = useParams();                         // id du pokémon dans l'URL = source de vérité
+    // La clé de cache contient l'id : changer d'URL relance la requête, revenir sur une fiche déjà vue est instantané
+    const { data: pokemon, isPending, isError } = useQuery(pokemonQuery(id));
 
-    // Chargement tant que le résultat ne correspond pas à l'id de l'URL
-    const isLoading = resultat?.id !== id;
-    const pokemon = isLoading ? null : resultat.pokemon;
-    const erreur = isLoading ? null : resultat.erreur;
-
-    useEffect(() => {
-        api.get(`/pokemon/${id}`)
-            .then((res) => {
-                setResultat({ id, erreur: null, pokemon: {
-                    id: res.data.id,
-                    nom: res.data.name,
-                    elements: res.data.types.map((t) => t.type.name),
-                    image: res.data.sprites.other["official-artwork"].front_default ?? res.data.sprites.front_default,
-                    poids: res.data.weight / 10,                // PokeAPI donne le poids en hectogrammes
-                    taille: res.data.height / 10,               // et la taille en décimètres
-                    capacites: res.data.abilities.map((a) => a.ability.name),
-                    stats: res.data.stats.map((s) => ({ nom: s.stat.name, valeur: s.base_stat })),
-                } });
-            })
-            .catch(() => {
-                setResultat({ id, pokemon: null, erreur: "Pokémon introuvable" });
-            });
-    }, [id]); // Relance le GET à chaque changement d'id
-
-    if (isLoading) return <p className="py-12 text-center text-slate-500">Chargement...</p>;
-    if (erreur) return <p className="rounded-lg bg-red-50 p-4 text-red-700 ring-1 ring-red-200">Erreur : {erreur}</p>;
-    if (!pokemon) return null;
+    if (isPending) return <Message>Chargement...</Message>;
+    if (isError) return <Message type="erreur">Erreur : Pokémon introuvable</Message>;
 
     return (
         <div>

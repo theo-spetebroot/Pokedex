@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
+import { useMutation } from "@tanstack/react-query";
 import api from "../services/api";
+import Message from "../components/atoms/Message";
 
 const champClasses = "w-full rounded-lg border border-slate-300 px-3 py-2 outline-none focus:border-red-500 focus:ring-2 focus:ring-red-200";
 
@@ -10,23 +12,17 @@ function AddPokemon() {
     const [image, setImage] = useState("");
     const [poids, setPoids] = useState("");
     const [taille, setTaille] = useState("");
-    const [isLoading, setIsLoading] = useState(false);  // État pour gérer l'envoi
-    const [erreur, setErreur] = useState(null);         // État pour gérer les erreurs
     const navigate = useNavigate();
+
+    // useMutation gère l'état d'envoi et l'erreur à notre place
+    const ajout = useMutation({
+        mutationFn: (pokemon) => api.post("/pokemon", pokemon),
+        onSuccess: () => navigate("/"),                 // Retour à l'accueil après l'ajout
+    });
 
     function handleSubmit(e) {
         e.preventDefault();                             // Empêche le rechargement de la page
-        setIsLoading(true);
-        setErreur(null);
-        api.post("/pokemon", { nom, element, image, poids: Number(poids), taille: Number(taille) })
-            .then(() => {
-                setIsLoading(false);
-                navigate("/");                          // Retour à l'accueil après l'ajout
-            })
-            .catch(() => {
-                setErreur("Erreur lors de l'ajout du pokémon");
-                setIsLoading(false);
-            });
+        ajout.mutate({ nom, element, image, poids: Number(poids), taille: Number(taille) });
     }
 
     return (
@@ -39,11 +35,11 @@ function AddPokemon() {
                 <input type="number" value={poids} onChange={(e) => setPoids(e.target.value)} placeholder="Poids (kg)" min="0" step="0.1" className={champClasses} />
                 <input type="number" value={taille} onChange={(e) => setTaille(e.target.value)} placeholder="Taille (m)" min="0" step="0.1" className={champClasses} />
             </div>
-            <button type="submit" disabled={isLoading} className="w-full rounded-lg bg-red-600 py-2 font-semibold text-white transition hover:bg-red-700 disabled:opacity-50">
-                {isLoading ? "Ajout en cours..." : "Ajouter"}
+            <button type="submit" disabled={ajout.isPending} className="w-full rounded-lg bg-red-600 py-2 font-semibold text-white transition hover:bg-red-700 disabled:opacity-50">
+                {ajout.isPending ? "Ajout en cours..." : "Ajouter"}
             </button>
 
-            {erreur && <p className="rounded-lg bg-red-50 p-3 text-sm text-red-700 ring-1 ring-red-200">{erreur}</p>}
+            {ajout.isError && <Message type="erreur">Erreur lors de l'ajout du pokémon</Message>}
         </form>
     );
 }
