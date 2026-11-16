@@ -46,12 +46,12 @@ function Home() {
 
     return (
         <div>
-            <h1>Liste des pokémons</h1>
-            {isLoading && <p>Chargement...</p>}
-            {erreur && <p style={{ color: "red" }}>Erreur : {erreur}</p>}
-            {!isLoading && !erreur && pokemons.length === 0 && <p>Aucun pokemon disponible.</p>}
+            <h1 className="mb-6 text-3xl font-bold">Liste des pokémons</h1>
+            {isLoading && <p className="py-12 text-center text-slate-500">Chargement...</p>}
+            {erreur && <p className="rounded-lg bg-red-50 p-4 text-red-700 ring-1 ring-red-200">Erreur : {erreur}</p>}
+            {!isLoading && !erreur && pokemons.length === 0 && <p className="py-12 text-center text-slate-500">Aucun pokemon disponible.</p>}
             {!isLoading && !erreur && (
-                <div>
+                <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
                     {pokemons.map((pokemon) => (
                         <PokeCard
                             key={pokemon.id}
