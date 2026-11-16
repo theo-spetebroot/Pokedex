@@ -3,9 +3,9 @@ const boutonClasses = "rounded-lg bg-white px-4 py-2 text-sm font-medium shadow-
 function Pagination({ page, nbPages, onPrecedent, onSuivant }) {
     return (
         <div className="mt-8 flex items-center justify-center gap-4">
-            <button onClick={onPrecedent} disabled={page <= 1} className={boutonClasses}>◀ Précédent</button>
-            <span className="text-sm text-slate-600">Page {page} / {nbPages || "…"}</span>
-            <button onClick={onSuivant} disabled={page >= nbPages} className={boutonClasses}>Suivant ▶</button>
+            <button data-testid="pagination-precedent" onClick={onPrecedent} disabled={page <= 1} className={boutonClasses}>◀ Précédent</button>
+            <span data-testid="pagination-page" className="text-sm text-slate-600">Page {page} / {nbPages || "…"}</span>
+            <button data-testid="pagination-suivant" onClick={onSuivant} disabled={page >= nbPages} className={boutonClasses}>Suivant ▶</button>
         </div>
     );
 }

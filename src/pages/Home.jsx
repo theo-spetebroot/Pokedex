@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { keepPreviousData, useQuery, useQueryClient } from "@tanstack/react-query";
-import { LIMIT, pokemonsQuery } from "../services/pokemons";
+import { getNumberOfPages, pokemonsQuery } from "../services/pokemons";
 import PokeCard from "../components/molecules/PokeCard";
 import Pagination from "../components/molecules/Pagination";
 import Message from "../components/atoms/Message";
@@ -16,7 +16,7 @@ function Home() {
         placeholderData: keepPreviousData,
     });
 
-    const nbPages = data ? Math.ceil(data.total / LIMIT) : 0;
+    const nbPages = data ? getNumberOfPages(data.total) : 0;
 
     // Précharge la page suivante en arrière-plan pour que "Suivant" soit instantané
     useEffect(() => {
@@ -25,7 +25,7 @@ function Home() {
 
     return (
         <div>
-            <h1 className="mb-6 text-3xl font-bold">Liste des pokémons</h1>
+            <h1 data-testid="home-title" className="mb-6 text-3xl font-bold">Liste des pokémons</h1>
             {isPending && <Message>Chargement...</Message>}
             {isError && <Message type="erreur">Erreur : {error.message}</Message>}
             {data && data.pokemons.length === 0 && <Message>Aucun pokemon disponible.</Message>}

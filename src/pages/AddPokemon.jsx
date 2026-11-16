@@ -27,7 +27,7 @@ function AddPokemon() {
 
     return (
         <form onSubmit={handleSubmit} className="mx-auto max-w-md space-y-4 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
-            <h1 className="text-2xl font-bold">Ajouter un pokémon</h1>
+            <h1 data-testid="add-pokemon-title" className="text-2xl font-bold">Ajouter un pokémon</h1>
             <input type="text" value={nom} onChange={(e) => setNom(e.target.value)} placeholder="Nom" required className={champClasses} />
             <input type="text" value={element} onChange={(e) => setElement(e.target.value)} placeholder="Élément" required className={champClasses} />
             <input type="url" value={image} onChange={(e) => setImage(e.target.value)} placeholder="URL de l'image" className={champClasses} />

@@ -21,7 +21,7 @@ function PokeDetails() {
                 </div>
                 <div>
                     <p className="text-sm font-medium text-slate-400">#{String(pokemon.id).padStart(3, "0")}</p>
-                    <h1 className="mb-3 text-3xl font-bold capitalize">{pokemon.nom}</h1>
+                    <h1 data-testid="poke-details-title" className="mb-3 text-3xl font-bold capitalize">{pokemon.nom}</h1>
                     <div className="mb-6 flex gap-2">
                         {pokemon.elements.map((element) => <TypeBadge key={element} element={element} />)}
                     </div>

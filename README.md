@@ -14,6 +14,7 @@ Application React qui affiche les pokémons de [PokeAPI](https://pokeapi.co/) : 
 | TanStack Query 5 | État serveur : cache, chargement, erreurs, préchargement |
 | Axios | Appels HTTP vers l'API REST |
 | Tailwind CSS 4 | Mise en forme |
+| Jest + React Testing Library | Tests unitaires et fonctionnels |
 | Oxlint | Lint |
 | GitHub Actions + Vercel | CI/CD |
 
@@ -23,8 +24,27 @@ Application React qui affiche les pokémons de [PokeAPI](https://pokeapi.co/) : 
 npm install
 npm run dev      # serveur de développement
 npm run lint     # vérification du code
+npm test         # tests Jest
 npm run build    # build de production dans dist/
 ```
+
+## Tests
+
+Les tests utilisent **Jest** et **Testing Library**. Chaque fichier de test est placé à côté du code qu'il teste. L'API est simulée avec `jest.mock` et les réponses de [src/data/mock-pokeapi-data.js](src/data/mock-pokeapi-data.js) : les tests n'appellent jamais la vraie PokeAPI.
+
+Les tests qui ont besoin du DOM commencent par le commentaire `@jest-environment jsdom`. Ils récupèrent les éléments avec les queries de `@testing-library/dom` (`getByTestId`, `getByPlaceholderText`…), grâce aux attributs `data-testid` ajoutés dans les composants.
+
+| Fichier | Type | Ce qui est vérifié |
+|---|---|---|
+| [services/pokemons.unit.test.js](src/services/pokemons.unit.test.js) | Unitaire (2) | `getNumberOfPages` calcule le nombre de pages. `pokemonQuery` convertit les unités de PokeAPI (hg → kg, dm → m) |
+| [components/molecules/Pagination.integration.test.jsx](src/components/molecules/Pagination.integration.test.jsx) | Intégration (2) | Le bouton « Précédent » est désactivé sur la page 1. Le clic sur « Suivant » appelle le callback |
+| [components/atoms/TypeBadge.test.jsx](src/components/atoms/TypeBadge.test.jsx) | Snapshot (1) | Le HTML du badge ne change pas sans qu'on le voie |
+| [App.test.jsx](src/App.test.jsx) | Fonctionnel (2) | Le routeur affiche la bonne page pour `/` et `/poke/1` |
+| [pages/AddPokemon.test.jsx](src/pages/AddPokemon.test.jsx) | Fonctionnel (1) | L'utilisateur remplit le formulaire, et le `POST` envoyé contient les bonnes valeurs |
+
+Les tests tournent aussi dans la CI, entre le lint et le build.
+
+**Configuration** ([jest.config.js](jest.config.js), [babel.config.cjs](babel.config.cjs)) : Jest fonctionne en CommonJS, alors que React Router 8 n'est publié qu'en ESM. Babel convertit donc le JSX du projet, mais aussi `react-router` et ses dépendances (`transformIgnorePatterns`). Un petit plugin remplace `import.meta`, qui n'existe pas en CommonJS. Vite n'utilise pas cette configuration Babel.
 
 ## Fonctionnalités
 
@@ -38,7 +58,7 @@ npm run build    # build de production dans dist/
 
 ## Déploiement et CI/CD
 
-- **CI** ([.github/workflows/ci-cd.yml](.github/workflows/ci-cd.yml)) : à chaque push sur `master` et à chaque pull request, GitHub Actions installe les dépendances (`npm ci`), lance le lint puis le build. Si une étape échoue, la PR est marquée en échec.
+- **CI** ([.github/workflows/ci-cd.yml](.github/workflows/ci-cd.yml)) : à chaque push sur `master` et à chaque pull request, GitHub Actions installe les dépendances (`npm ci`), lance le lint, les tests puis le build. Si une étape échoue, la PR est marquée en échec.
 - **CD** : l'intégration GitHub de Vercel déploie automatiquement. Chaque push sur `master` part en production, et chaque pull request a son URL de preview.
 - [vercel.json](vercel.json) redirige toutes les URL vers `index.html`. Sans ça, recharger la page sur `/poke/25` renverrait une erreur 404, puisque le routage se fait côté navigateur.
 

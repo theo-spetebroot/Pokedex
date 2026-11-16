@@ -2,6 +2,13 @@ import api from "./api";
 
 export const LIMIT = 10;   // Nombre de pokémons par page
 
+/**
+ * Nombre de pages nécessaires pour afficher tous les pokémons
+ * @param {number} numberOfPokemons
+ * @returns {number}
+ */
+export const getNumberOfPages = (numberOfPokemons) => Math.ceil(numberOfPokemons / LIMIT);
+
 // Requêtes TanStack Query : une clé de cache + la fonction qui va chercher les données.
 // Toute la conversion PokeAPI → objets de l'app est centralisée ici, les composants n'affichent que le résultat.
 
