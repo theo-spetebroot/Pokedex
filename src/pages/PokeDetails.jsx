@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { pokemonQuery } from "../services/pokemons";
 import TypeBadge from "../components/atoms/TypeBadge";
 import Message from "../components/atoms/Message";
+import Comments from "../components/organisms/Comments";
 
 function PokeDetails() {
     const { id } = useParams();                         // id du pokémon dans l'URL = source de vérité
@@ -56,6 +57,7 @@ function PokeDetails() {
                     </ul>
                 </div>
             </div>
+            <Comments pokemonId={pokemon.id} />
         </div>
     );
 }
