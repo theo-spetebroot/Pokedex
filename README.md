@@ -3,7 +3,7 @@
 Application React qui affiche les pokémons de [PokeAPI](https://pokeapi.co/) : liste paginée, fiche détail avec commentaires et formulaire d'ajout.
 
 - **Site en ligne :** https://app-de-fou.vercel.app/
-- **Dépôt :** https://github.com/Tidragon-coder/appDeFou
+- **Dépôt :** https://github.com/theo-spetebroot/Pokedex
 
 ## Stack
 
